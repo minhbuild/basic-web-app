@@ -15,5 +15,13 @@ export default function QueryProcessor(query: string): string {
     return "minhd";
   }
 
+  if (query.toLowerCase().includes("andrewid")) {
+    return "minhd";
+  }
+
+  if (query.toLowerCase().includes("andrew")) {
+    return "minhd";
+  }
+
   return "";
 }

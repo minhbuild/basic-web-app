@@ -33,4 +33,19 @@ describe("QueryProcessor", () => {
             "minhd"
           ));
     })
+
+    test('should return name', () => {
+        const query = "What is your ID?";
+        const response: string = QueryProcessor(query);
+        expect(response).toBe((
+            "minhd"
+          ));
+
+    test('should return name', () => {
+        const query = "What is your AndrewID?";
+        const response: string = QueryProcessor(query);
+        expect(response).toBe((
+            "minhd"
+          ));
+    })
 });
