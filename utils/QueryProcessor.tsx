@@ -7,10 +7,6 @@ export default function QueryProcessor(query: string): string {
     );
   }
 
-  if (query.toLowerCase().includes("name")) {
-    return "Rohan";
-  }
-
   if (query.toLowerCase().includes("id")) {
     return "minhd";
   }
@@ -24,7 +20,7 @@ export default function QueryProcessor(query: string): string {
   }
 
   if (query.toLowerCase().includes("name")) {
-    return "Minh";
+    return "minhd";
   }
 
   return "";
