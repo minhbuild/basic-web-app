@@ -22,7 +22,7 @@ export default function QueryProcessor(query: string): string {
   if (query.toLowerCase().includes("name")) {
     return "minhd";
   }
-
+""
   // Handle "which of the following numbers is the largest: x, y, z"
   const largestMatch = query.match(/which of the following numbers is the largest:\s*([\d\s,]+)/i);
   if (largestMatch) {
@@ -39,6 +39,15 @@ export default function QueryProcessor(query: string): string {
     const num1 = parseFloat(additionMatch[1]);
     const num2 = parseFloat(additionMatch[2]);
     const result = num1 + num2;
+    return (Number.isInteger(result) ? result.toString() : result.toString());
+  }
+
+  // Handle "what is x multiplied by y?"
+  const multiplicationMatch = query.match(/what is\s+([\d.]+)\s*(?:multiplied by|times)\s*([\d.]+)/i);
+  if (multiplicationMatch) {
+    const num1 = parseFloat(multiplicationMatch[1]);
+    const num2 = parseFloat(multiplicationMatch[2]);
+    const result = num1 * num2;
     return (Number.isInteger(result) ? result.toString() : result.toString());
   }
 
