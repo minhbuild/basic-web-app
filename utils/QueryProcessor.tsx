@@ -42,6 +42,15 @@ export default function QueryProcessor(query: string): string {
     return (Number.isInteger(result) ? result.toString() : result.toString());
   }
 
+  // Handle "what is x minus y?" or "what is x - y?"
+  const subtractionMatch = query.match(/what is\s+([\d.]+)\s*(?:-|minus)\s*([\d.]+)/i);
+  if (subtractionMatch) {
+    const num1 = parseFloat(subtractionMatch[1]);
+    const num2 = parseFloat(subtractionMatch[2]);
+    const result = num1 - num2;
+    return (Number.isInteger(result) ? result.toString() : result.toString());
+  }
+
   // Handle "what is x multiplied by y?"
   const multiplicationMatch = query.match(/what is\s+([\d.]+)\s*(?:multiplied by|times)\s*([\d.]+)/i);
   if (multiplicationMatch) {
