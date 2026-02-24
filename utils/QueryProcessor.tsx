@@ -48,11 +48,11 @@ export default function QueryProcessor(query: string): string {
         .replace(/\s+minus\s+/gi, ' - ')
         .replace(/\s+/g, ' '); // normalize spaces
       
-      // Parse expression respecting order of operations
+      // Parse expression respecting order of operations using BigInt for large numbers
       // Split by + and -, keeping the operators
       const addSubTokens = normalized.split(/\s*([+-])\s*/);
       
-      let result = 0;
+      let result = BigInt(0);
       let currentOp = '+';
       
       for (let i = 0; i < addSubTokens.length; i++) {
@@ -64,10 +64,14 @@ export default function QueryProcessor(query: string): string {
           // Evaluate multiplication within this term
           const mulParts = token.split(/\s*\*\s*/).map(mulTerm => {
             // Evaluate exponentiation within each multiplication term
-            const expParts = mulTerm.trim().split(/\s*\^\s*/).map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
-            return expParts.reduce((a, b) => Math.pow(a, b));
+            const expParts = mulTerm.trim().split(/\s*\^\s*/).map(p => p.trim());
+            let termResult = BigInt(expParts[0]);
+            for (let j = 1; j < expParts.length; j++) {
+              termResult = termResult ** BigInt(expParts[j]);
+            }
+            return termResult;
           });
-          let termResult = mulParts.reduce((a, b) => a * b, 1);
+          let termResult = mulParts.reduce((a, b) => a * b, BigInt(1));
           
           if (currentOp === '+') {
             result += termResult;
@@ -77,7 +81,7 @@ export default function QueryProcessor(query: string): string {
         }
       }
       
-      return (Number.isInteger(result) ? result.toString() : result.toString());
+      return result.toString();
     }
   }
 
