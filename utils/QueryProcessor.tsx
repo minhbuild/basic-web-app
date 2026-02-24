@@ -51,5 +51,20 @@ export default function QueryProcessor(query: string): string {
     return (Number.isInteger(result) ? result.toString() : result.toString());
   }
 
+  // Handle "which of the following numbers is both a square and a cube:"
+  const squareAndCubeMatch = query.match(/which of the following numbers is both a square and a cube:\s*([\d\s,]+)/i);
+  if (squareAndCubeMatch) {
+    const numbersStr = squareAndCubeMatch[1];
+    const numbers = numbersStr.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+    
+    for (const num of numbers) {
+      const sqrtVal = Math.sqrt(num);
+      const cbrtVal = Math.cbrt(num);
+      if (Number.isInteger(sqrtVal) && Number.isInteger(cbrtVal)) {
+        return num.toString();
+      }
+    }
+  }
+
   return "";
 }
