@@ -23,14 +23,6 @@ export default function QueryProcessor(query: string): string {
     return "minhd";
   }
 
-  if (query.toLowerCase().includes("12, 65, 81")) {
-    return "81";
-  }
-
-  if (query.toLowerCase().includes("37 plus 27")) {
-    return "64";
-  }
-
   // Handle "which of the following numbers is the largest: x, y, z"
   const largestMatch = query.match(/which of the following numbers is the largest:\s*([\d\s,]+)/i);
   if (largestMatch) {
@@ -41,8 +33,8 @@ export default function QueryProcessor(query: string): string {
     }
   }
 
-  // Handle "what is x + y?"
-  const additionMatch = query.match(/what is\s+([\d.]+)\s*\+\s*([\d.]+)/i);
+  // Handle "what is x + y?" or "what is x plus y?"
+  const additionMatch = query.match(/what is\s+([\d.]+)\s*(?:\+|plus)\s*([\d.]+)/i);
   if (additionMatch) {
     const num1 = parseFloat(additionMatch[1]);
     const num2 = parseFloat(additionMatch[2]);
