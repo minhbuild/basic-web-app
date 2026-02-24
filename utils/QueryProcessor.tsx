@@ -66,5 +66,25 @@ export default function QueryProcessor(query: string): string {
     }
   }
 
+  // Handle "which of the following numbers are primes:"
+  const primesMatch = query.match(/which of the following numbers are primes:\s*([\d\s,]+)/i);
+  if (primesMatch) {
+    const numbersStr = primesMatch[1];
+    const numbers = numbersStr.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+    
+    const isPrime = (num: number): boolean => {
+      if (num < 2) return false;
+      if (num === 2) return true;
+      if (num % 2 === 0) return false;
+      for (let i = 3; i <= Math.sqrt(num); i += 2) {
+        if (num % i === 0) return false;
+      }
+      return true;
+    };
+
+    const primes = numbers.filter(num => isPrime(num));
+    return primes.length > 0 ? primes.join(', ') : "";
+  }
+
   return "";
 }
