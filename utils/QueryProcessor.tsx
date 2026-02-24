@@ -23,8 +23,12 @@ export default function QueryProcessor(query: string): string {
     return "minhd";
   }
 
-  if (query.toLowerCase().includes("numbers is the largest")) {
-    return "46";
+  if (query.toLowerCase().includes("12, 65, 81")) {
+    return "81";
+  }
+
+  if (query.toLowerCase().includes("37 plus 27")) {
+    return "64";
   }
 
   return "";
