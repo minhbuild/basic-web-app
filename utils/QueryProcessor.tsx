@@ -31,5 +31,24 @@ export default function QueryProcessor(query: string): string {
     return "64";
   }
 
+  // Handle "which of the following numbers is the largest: x, y, z"
+  const largestMatch = query.match(/which of the following numbers is the largest:\s*([\d\s,]+)/i);
+  if (largestMatch) {
+    const numbersStr = largestMatch[1];
+    const numbers = numbersStr.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+    if (numbers.length > 0) {
+      return Math.max(...numbers).toString();
+    }
+  }
+
+  // Handle "what is x + y?"
+  const additionMatch = query.match(/what is\s+([\d.]+)\s*\+\s*([\d.]+)/i);
+  if (additionMatch) {
+    const num1 = parseFloat(additionMatch[1]);
+    const num2 = parseFloat(additionMatch[2]);
+    const result = num1 + num2;
+    return (Number.isInteger(result) ? result.toString() : result.toString());
+  }
+
   return "";
 }
