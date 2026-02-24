@@ -32,6 +32,49 @@ export default function QueryProcessor(query: string): string {
       return Math.max(...numbers).toString();
     }
   }
+  // Handle "what is <expression>?" with order of operations (*, +, -)
+  const complexExprMatch = query.match(/what is\s+(.+?)(\?)?$/i);
+  if (complexExprMatch) {
+    const expr = complexExprMatch[1].trim();
+    
+    // Check if it contains mathematical operators
+    if (/(?:\+|plus|-|minus|\*|multiplied|times)/i.test(expr)) {
+      // Normalize the expression: replace word operators with symbols
+      let normalized = expr
+        .replace(/\s+multiplied\s+by\s+/gi, ' * ')
+        .replace(/\s+times\s+/gi, ' * ')
+        .replace(/\s+plus\s+/gi, ' + ')
+        .replace(/\s+minus\s+/gi, ' - ')
+        .replace(/\s+/g, ' '); // normalize spaces
+      
+      // Parse expression respecting order of operations
+      // Split by + and -, keeping the operators
+      const addSubTokens = normalized.split(/\s*([+-])\s*/);
+      
+      let result = 0;
+      let currentOp = '+';
+      
+      for (let i = 0; i < addSubTokens.length; i++) {
+        const token = addSubTokens[i].trim();
+        
+        if (token === '+' || token === '-') {
+          currentOp = token;
+        } else if (token) {
+          // Evaluate multiplication within this term
+          const mulParts = token.split(/\s*\*\s*/).map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
+          let termResult = mulParts.reduce((a, b) => a * b, 1);
+          
+          if (currentOp === '+') {
+            result += termResult;
+          } else if (currentOp === '-') {
+            result -= termResult;
+          }
+        }
+      }
+      
+      return (Number.isInteger(result) ? result.toString() : result.toString());
+    }
+  }
 
   // Handle "what is x + y?" or "what is x plus y?" (generalized for multiple additions)
   const additionMatch = query.match(/what is\s+([\d.]+(?:\s*(?:\+|plus)\s*[\d.]+)*)/i);
