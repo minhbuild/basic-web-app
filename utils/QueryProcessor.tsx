@@ -32,15 +32,16 @@ export default function QueryProcessor(query: string): string {
       return Math.max(...numbers).toString();
     }
   }
-  // Handle "what is <expression>?" with order of operations (*, +, -)
+  // Handle "what is <expression>?" with order of operations (^, *, +, -)
   const complexExprMatch = query.match(/what is\s+(.+?)(\?)?$/i);
   if (complexExprMatch) {
     const expr = complexExprMatch[1].trim();
     
     // Check if it contains mathematical operators
-    if (/(?:\+|plus|-|minus|\*|multiplied|times)/i.test(expr)) {
+    if (/(?:\+|plus|-|minus|\*|multiplied|times|\^|to\s+the\s+power\s+of)/i.test(expr)) {
       // Normalize the expression: replace word operators with symbols
       let normalized = expr
+        .replace(/\s+to\s+the\s+power\s+of\s+/gi, ' ^ ')
         .replace(/\s+multiplied\s+by\s+/gi, ' * ')
         .replace(/\s+times\s+/gi, ' * ')
         .replace(/\s+plus\s+/gi, ' + ')
@@ -61,7 +62,11 @@ export default function QueryProcessor(query: string): string {
           currentOp = token;
         } else if (token) {
           // Evaluate multiplication within this term
-          const mulParts = token.split(/\s*\*\s*/).map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
+          const mulParts = token.split(/\s*\*\s*/).map(mulTerm => {
+            // Evaluate exponentiation within each multiplication term
+            const expParts = mulTerm.trim().split(/\s*\^\s*/).map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
+            return expParts.reduce((a, b) => Math.pow(a, b));
+          });
           let termResult = mulParts.reduce((a, b) => a * b, 1);
           
           if (currentOp === '+') {
