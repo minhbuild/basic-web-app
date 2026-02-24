@@ -33,13 +33,15 @@ export default function QueryProcessor(query: string): string {
     }
   }
 
-  // Handle "what is x + y?" or "what is x plus y?"
-  const additionMatch = query.match(/what is\s+([\d.]+)\s*(?:\+|plus)\s*([\d.]+)/i);
+  // Handle "what is x + y?" or "what is x plus y?" (generalized for multiple additions)
+  const additionMatch = query.match(/what is\s+([\d.]+(?:\s*(?:\+|plus)\s*[\d.]+)*)/i);
   if (additionMatch) {
-    const num1 = parseFloat(additionMatch[1]);
-    const num2 = parseFloat(additionMatch[2]);
-    const result = num1 + num2;
-    return (Number.isInteger(result) ? result.toString() : result.toString());
+    const expressionStr = additionMatch[1];
+    const numbers = expressionStr.split(/\s*(?:\+|plus)\s*/i).map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+    if (numbers.length > 0) {
+      const result = numbers.reduce((sum, num) => sum + num, 0);
+      return (Number.isInteger(result) ? result.toString() : result.toString());
+    }
   }
 
   // Handle "what is x minus y?" or "what is x - y?"
