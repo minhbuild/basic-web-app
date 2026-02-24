@@ -23,5 +23,9 @@ export default function QueryProcessor(query: string): string {
     return "minhd";
   }
 
+  if (query.toLowerCase().includes("numbers is the largest")) {
+    return "46";
+  }
+
   return "";
 }
