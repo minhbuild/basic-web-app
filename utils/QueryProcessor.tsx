@@ -149,5 +149,22 @@ export default function QueryProcessor(query: string): string {
     return primes.length > 0 ? primes.join(', ') : "";
   }
 
+  // Handle "which of the following is an anagram of [word]: [list]?" generalized
+  const anagramMatch = query.match(/which of the following (?:is|are) an? anagram of\s+(\w+):\s*(.+)/i);
+  if (anagramMatch) {
+    const targetWord = anagramMatch[1].toLowerCase();
+    const candidatesStr = anagramMatch[2];
+    const candidates = candidatesStr.split(',').map(w => w.trim().toLowerCase()).filter(w => w);
+    
+    const getNormalizedLetters = (word: string): string => {
+      return word.replace(/[^a-z]/g, '').split('').sort().join('');
+    };
+    
+    const targetLetters = getNormalizedLetters(targetWord);
+    const anagrams = candidates.filter(candidate => getNormalizedLetters(candidate) === targetLetters && candidate !== targetWord);
+    
+    return anagrams.length > 0 ? anagrams.join(', ') : "";
+  }
+
   return "";
 }
